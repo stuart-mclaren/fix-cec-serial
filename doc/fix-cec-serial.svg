@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+<svg width="31cm" height="24cm" viewBox="79 14 613 469" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g>
+    <rect style="fill: #ffffff" x="400" y="15" width="291" height="145"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="400" y="15" width="291" height="145"/>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="340" y="300" width="260" height="182"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="340" y="300" width="260" height="182"/>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="80" y="80" width="200.6" height="176.8"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="80" y="80" width="200.6" height="176.8"/>
+  </g>
+  <text font-size="16.9333" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="545.5" y="87.5">
+    <tspan x="545.5" y="87.5">Raspberry Pi</tspan>
+    <tspan x="545.5" y="108.667">Zero W</tspan>
+    <tspan x="545.5" y="129.833">(with "Serial Pi Zero" HAT)</tspan>
+  </text>
+  <text font-size="16.9333" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="180" y="160">
+    <tspan x="180" y="160">Projector</tspan>
+    <tspan x="180" y="181.167">Optima HD142X</tspan>
+  </text>
+  <text font-size="16.9333" style="fill: #000000;text-anchor:middle;font-family:monospace;font-style:normal;font-weight:normal" x="460" y="360">
+    <tspan x="460" y="360">Denon AVR</tspan>
+    <tspan x="460" y="381.167">X4500</tspan>
+    <tspan x="460" y="402.333"></tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="420" y1="160" x2="420" y2="290.264"/>
+    <polygon style="fill: #000000" points="420,297.764 415,287.764 420,290.264 425,287.764 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="420,297.764 415,287.764 420,290.264 425,287.764 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="350.294" y1="299.02" x2="289.32" y2="252.169"/>
+    <polygon style="fill: #000000" points="283.373,247.599 294.349,249.727 289.32,252.169 288.256,257.657 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="283.373,247.599 294.349,249.727 289.32,252.169 288.256,257.657 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="260" y="280">
+    <tspan x="260" y="280">HDMI</tspan>
+    <tspan x="260" y="296">out</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="380" y="260">
+    <tspan x="380" y="260">HDMI</tspan>
+    <tspan x="380" y="276">in</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="620" y="140">
+    <tspan x="620" y="140"></tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #000000" x1="500" y1="160" x2="500" y2="290.264"/>
+    <polygon style="fill: #000000" points="500,297.764 495,287.764 500,290.264 505,287.764 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="500,297.764 495,287.764 500,290.264 505,287.764 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="520" y="240">
+    <tspan x="520" y="240">RS232</tspan>
+    <tspan x="520" y="256">Serial</tspan>
+    <tspan x="520" y="272">in</tspan>
+  </text>
+</svg>
