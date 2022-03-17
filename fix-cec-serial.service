@@ -1,0 +1,14 @@
+[Unit]
+Description=fix-cec-serial service
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+#User=centos
+ExecStart=/usr/local/bin/fix-cec-serial
+
+[Install]
+WantedBy=multi-user.target
