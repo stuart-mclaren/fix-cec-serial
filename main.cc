@@ -6,12 +6,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,7 +20,7 @@
 
 /* Change the IP address below to the IP address of your AVR */
 
-#define IPADDR "192.168.1.45"
+#define SERIAL_PORT "/dev/ttyAMA0"
 
 /* for hdmi */
 #include <bcm_host.h>
@@ -182,7 +182,7 @@ void cec_callback(void *callback_data, uint32_t reason, uint32_t param1, uint32_
 				if (message.follower == 0 ) {
 					std::cerr << "power on projector" << std::endl;
 					//power_on_projector2();
-					
+
 				} else {
 					std::cerr << "do not power on projector" << std::endl;
 				}
@@ -194,7 +194,7 @@ void cec_callback(void *callback_data, uint32_t reason, uint32_t param1, uint32_
 				if ( message.follower == 0xf ) {
 					std::cerr << "power off projector" << std::endl;
 					//power_off_projector();
-					
+
 				} else {
 					std::cerr << "do not power off projector" << std::endl;
 				}
@@ -282,7 +282,7 @@ void cec_callback(void *callback_data, uint32_t reason, uint32_t param1, uint32_
 
 void tv_callback(void *callback_data, uint32_t reason, uint32_t p0, uint32_t p1) {
 	std::cerr << "Got a TV callback!" << std::endl << std::hex <<
-		"reason = 0x" << reason << std::endl << 
+		"reason = 0x" << reason << std::endl <<
 		"param0 = 0x" << p0 << std::endl <<
 		"param1 = 0x" << p1 << std::endl;
 }
@@ -424,66 +424,87 @@ void handleDenonProtocolMessage(char *read_buf){
 }
 
 int watch_denon() {
-	 struct timeval tv;
-	 tv.tv_sec = 300 /* timeout_in_seconds */;
-	 tv.tv_usec = 0;
 
-         int socket_desc;
+         int serial_fd;
 	 int n = 0;
-         struct sockaddr_in server;
 
-         socket_desc  = socket(AF_INET, SOCK_STREAM, 0);
-         if (socket_desc == -1 )
+
+	 serial_fd = open(SERIAL_PORT, O_RDWR | O_NOCTTY);
+         //Connect to serial port
+         if (serial_fd < 0)
          {
-                 printf("Could not create socket");
-         }
-         server.sin_addr.s_addr = inet_addr(IPADDR);
-         server.sin_family = AF_INET;
-         server.sin_port = htons( 23 );
-	 setsockopt(socket_desc, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
-
-         //Connect to remote server
-         if (connect(socket_desc , (struct sockaddr *)&server , sizeof(server)) < 0)
-        {
-                puts("connect error");
+                perror("Error connecting to /dev/ttyAMA0");
                 return 1;
-        }
+         }
 
-        puts("Connected");
-	// Trigger SI INPUT RESPONSE
-	// This allows us to detect and populate the current input setting
-	if ( write(socket_desc,"SI?",strlen("SI?") + 1) != strlen("SI?") + 1 ) {
-                puts("socket write error");
-		return 1;
-	}
+  int serial_port = open("/dev/ttyAMA0", O_RDWR | O_SYNC);
 
-         //Receive a reply from the server
-        while(1) {
-                n = readline(socket_desc, read_buf, 4096);
-		if (n<0){
-                	printf("XXX readline error/timeout [%d]\n", n);
-			close(socket_desc);
-         		socket_desc  = socket(AF_INET, SOCK_STREAM, 0);
-         		if (socket_desc == -1 )
-         		{
-                 		printf("Could not recreate socket");
-				return 1;
-         		}
-         		server.sin_addr.s_addr = inet_addr(IPADDR);
-         		server.sin_family = AF_INET;
-         		server.sin_port = htons( 23 );
-	 		setsockopt(socket_desc, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
-         		if (connect(socket_desc , (struct sockaddr *)&server , sizeof(server)) < 0)
-        		{
-                		puts("XXX reconnect error");
-                		return 1;
-        		} else {
-                		puts("XXX reconnect ok");
-			}
-		}
-		handleDenonProtocolMessage(read_buf);
-        }
+  // Create new termios struct, we call it 'tty' for convention
+  struct termios tty;
 
+  // Read in existing settings, and handle any error
+  if(tcgetattr(serial_port, &tty) != 0) {
+      printf("Error %i from tcgetattr: %s\n", errno, strerror(errno));
+      return 1;
+  }
+
+  tty.c_cflag &= ~PARENB; // Clear parity bit, disabling parity (most common)
+  tty.c_cflag &= ~CSTOPB; // Clear stop field, only one stop bit used in communication (most common)
+  tty.c_cflag &= ~CSIZE; // Clear all bits that set the data size
+  tty.c_cflag |= CS8; // 8 bits per byte (most common)
+  tty.c_cflag &= ~CRTSCTS; // Disable RTS/CTS hardware flow control (most common)
+  tty.c_cflag |= CREAD | CLOCAL; // Turn on READ & ignore ctrl lines (CLOCAL = 1)
+
+  tty.c_lflag &= ~ICANON;
+  tty.c_lflag &= ~ECHO; // Disable echo
+  tty.c_lflag &= ~ECHOE; // Disable erasure
+  tty.c_lflag &= ~ECHONL; // Disable new-line echo
+  tty.c_lflag &= ~ISIG; // Disable interpretation of INTR, QUIT and SUSP
+  tty.c_iflag &= ~(IXON | IXOFF | IXANY); // Turn off s/w flow ctrl
+  tty.c_iflag &= ~(IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL); // Disable any special handling of received bytes
+
+  tty.c_oflag &= ~OPOST; // Prevent special interpretation of output bytes (e.g. newline chars)
+  tty.c_oflag &= ~ONLCR; // Prevent conversion of newline to carriage return/line feed
+  // tty.c_oflag &= ~OXTABS; // Prevent conversion of tabs to spaces (NOT PRESENT ON LINUX)
+  // tty.c_oflag &= ~ONOEOT; // Prevent removal of C-d chars (0x004) in output (NOT PRESENT ON LINUX)
+
+  tty.c_cc[VTIME] = 200;    // Wait for up to 20s (200 deciseconds), returning as soon as any data is received.
+  tty.c_cc[VMIN] = 0;
+
+  // Set in/out baud rate to be 9600
+  cfsetispeed(&tty, B9600);
+  cfsetospeed(&tty, B9600);
+
+  // Save tty settings, also checking for error
+  if (tcsetattr(serial_port, TCSANOW, &tty) != 0) {
+      printf("Error %i from tcsetattr: %s\n", errno, strerror(errno));
+      return 1;
+  }
+
+  // Allocate memory for read buffer, set size according to your needs
+  char buf [256];
+
+  puts("connected to /dev/ttyAMA0");
+  // trigger si input response
+  // this allows us to detect and populate the current input setting
+  unsigned char msg[] = { 'S', 'I', '?', '\r' };
+  if ( write(serial_fd, msg, sizeof(msg)) != sizeof(msg) ) {
+        puts("serial port write error");
+  	return 1;
+  }
+
+  // read from the serial port
+  while(1) {
+        n = readline(serial_fd, buf, 256);
+  	if (n<0){
+          	printf("readline error [%d]\n", n);
+  		close(serial_fd);
+  		exit(1);
+  	}
+  	handleDenonProtocolMessage(buf);
+  }
+
+  close(serial_port);
   return 0;
 }
 
